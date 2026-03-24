@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whiteout Survival - Bear Hunt March Calculator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap');
+        
+        :root {
+            --bg: #0d1117;
+            --card: #161b22;
+            --text: #c9d1d9;
+            --accent: #238636;
+            --danger: #b22222;
+            --border: #30363d;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            line-height: 1.5;
+        }
+        
+        .container { max-width: 1100px; margin: 0 auto; }
+        
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { font-size: 28px; font-weight: 600; color: #fff; }
+        .subtitle { color: #8b949e; font-size: 16px; margin-top: 4px; }
+        
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        
+        .input-group { margin-bottom: 16px; }
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #8b949e;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 16px;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(35, 134, 54, 0.3);
+        }
+        
+        .presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .preset-btn {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 9999px;
+            border: none;
+            background: #21262d;
+            color: #fff;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        
+        .preset-btn:hover:not(:disabled) { background: var(--accent); }
+        .preset-btn.insufficient {
+            background: var(--danger);
+            opacity: 0.85;
+            cursor: not-allowed;
+        }
+        
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #21262d;
+            padding: 10px 16px;
+            border-radius: 9999px;
+            width: fit-content;
+            margin-bottom: 12px;
+        }
+        
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+        
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #30363d;
+            transition: .3s;
+            border-radius: 9999px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px; width: 20px;
+            left: 4px; bottom: 4px;
+            background: #fff;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider { background: var(--accent); }
+        input:checked + .slider:before { transform: translateX(24px); }
+        
+        .total-capacity {
+            background: #21262d;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #58a6ff;
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .language-selector {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .language-selector select {
+            background: #21262d;
+            color: #fff;
+            border: 1px solid var(--border);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        button {
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: #2ea44f; }
+        .btn-secondary { background: #21262d; color: #c9d1d9; }
+        .btn-secondary:hover { background: #30363d; }
+        
+        .output {
+            background: #21262d;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            font-size: 15px;
+        }
+        
+        .total-used {
+            margin-top: 20px;
+            padding: 16px;
+            background: #1f252e;
+            border-radius: 10px;
+            border: 1px solid #238636;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .warning {
+            background: rgba(178, 34, 34, 0.15);
+            border-left: 4px solid var(--danger);
+            color: #f85149;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .footer {
+            text-align: center;
+            color: #8b949e;
+            font-size: 13px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="language-selector">
+            <select id="language-select" onchange="changeLanguage()">
+                <option value="en">🇬🇧 English (Default)</option>
+                <option value="ar">🇸🇦 العربية</option>
+                <option value="tr">🇹🇷 Türkçe</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="ko">🇰🇷 한국어</option>
+                <option value="zh">🇨🇳 中文</option>
+            </select>
+        </div>
+
+        <header>
+            <h1 id="title">❄️ Whiteout Survival - Bear Hunt March Calculator</h1>
+            <p id="subtitle" class="subtitle">Real-time • Snow Ape + Ursa's Bane • All features working</p>
+        </header>
+
+        <!-- General Inputs -->
+        <div class="card">
+            <div class="section-title" id="general-title">📋 General Inputs</div>
+            <div class="grid">
+                <div class="input-group">
+                    <label for="base-capacity" id="base-label">Base Deployment Capacity per March</label>
+                    <input type="number" id="base-capacity" value="178710" min="1">
+                </div>
+
+                <div>
+                    <div class="toggle-container">
+                        <label class="toggle">
+                            <input type="checkbox" id="snow-ape-active" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span id="snow-label" style="font-weight:500;">Snow Ape (Tumbling Power) – Active</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="snow-ape-level" id="snow-level-label">Snow Ape Level (1-10) → +1,500 per level</label>
+                        <input type="number" id="snow-ape-level" value="10" min="1" max="10">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="ursa-level" id="ursa-label">Cyril Ursa's Bane Level (0-10) → +3,000 per level</label>
+                    <input type="number" id="ursa-level" value="10" min="0" max="10">
+                </div>
+
+                <div class="input-group">
+                    <label id="total-cap-label">Total Deployment Capacity (auto-calculated)</label>
+                    <div id="total-capacity-display" class="total-capacity">208710</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="total-inf" id="inf-label">Total Infantry you have</label>
+                    <input type="number" id="total-inf" value="400000" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="total-lan" id="lan-label">Total Lancers you have</label>
+                    <input type="number" id="total-lan" value="300000" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="total-mar" id="mar-label">Total Marksmen you have</label>
+                    <input type="number" id="total-mar" value="648417" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="num-joiners" id="joiners-label">Number of Joiner Marches</label>
+                    <input type="number" id="num-joiners" value="6" min="1" max="20">
+                </div>
+            </div>
+        </div>
+
+        <!-- Main March -->
+        <div class="card">
+            <div class="section-title">
+                <span id="main-title">🚩 Main March Inputs</span>
+                <div class="toggle-container">
+                    <label class="toggle">
+                        <input type="checkbox" id="rally-opener" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <span id="opener-label" style="font-weight:500; font-size:15px;">I am the Rally Opener</span>
+                </div>
+            </div>
+            
+            <div class="grid">
+                <div>
+                    <div class="input-group"><label for="main-inf-pct" id="main-inf-label">Infantry %</label><input type="number" id="main-inf-pct" value="10" min="0" max="100" step="1"></div>
+                    <div class="input-group"><label for="main-lan-pct" id="main-lan-label">Lancers %</label><input type="number" id="main-lan-pct" value="15" min="0" max="100" step="1"></div>
+                    <div class="input-group"><label for="main-mar-pct" id="main-mar-label">Marksmen %</label><input type="number" id="main-mar-pct" value="75" min="0" max="100" step="1"></div>
+                </div>
+                <div>
+                    <label style="margin-bottom:8px; display:block;" id="main-presets-label">Suggested Ratios (Main)</label>
+                    <div id="main-presets" class="presets"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Joiner March -->
+        <div class="card">
+            <div class="section-title" id="joiner-title">🔄 Joiner March Inputs</div>
+            
+            <div class="grid">
+                <div>
+                    <div class="input-group"><label for="join-inf-pct" id="join-inf-label">Infantry %</label><input type="number" id="join-inf-pct" value="10" min="0" max="100" step="1"></div>
+                    <div class="input-group"><label for="join-lan-pct" id="join-lan-label">Lancers %</label><input type="number" id="join-lan-pct" value="15" min="0" max="100" step="1"></div>
+                    <div class="input-group"><label for="join-mar-pct" id="join-mar-label">Marksmen %</label><input type="number" id="join-mar-pct" value="75" min="0" max="100" step="1"></div>
+                    
+                    <button onclick="autoOptimizeJoiners()" class="btn-primary" style="margin-top:16px; width:100%; font-size:15px;" id="auto-btn">
+                        ✨ Auto-Optimize Joiner Ratios<br>
+                        <span style="font-size:13px; opacity:0.9;">(≤15% Infantry • ≤20% Lancers • Max Marksmen)</span>
+                    </button>
+                </div>
+                
+                <div>
+                    <label style="margin-bottom:8px; display:block;" id="join-presets-label">Suggested Ratios (Joiners – syncs with Main)</label>
+                    <div id="joiner-presets" class="presets"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-bar">
+            <button onclick="calculate()" class="btn-primary" id="calc-btn">🔄 Calculate Distribution Now</button>
+            <button onclick="saveDefaults()" class="btn-secondary" id="save-btn">💾 Save All Settings</button>
+            <button onclick="loadDefaults()" class="btn-secondary" id="load-btn">📥 Load Saved Settings</button>
+            <button onclick="resetToFactoryDefaults()" class="btn-secondary" id="reset-btn">🔄 Reset to Factory Defaults</button>
+        </div>
+
+        <!-- Output -->
+        <div class="card">
+            <div id="warnings" class="warning" style="display:none;"></div>
+            <div id="output" class="output"></div>
+        </div>
+
+        <div class="footer" id="footer-text">
+            ❄️ This tool was designed with ❤️ By Dr Abaziz for all Members of IMP ❄️
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                title: "❄️ Whiteout Survival - Bear Hunt March Calculator",
+                subtitle: "Real-time • Snow Ape + Ursa's Bane • All features working",
+                generalTitle: "📋 General Inputs",
+                baseLabel: "Base Deployment Capacity per March",
+                snowLabel: "Snow Ape (Tumbling Power) – Active",
+                snowLevelLabel: "Snow Ape Level (1-10) → +1,500 per level",
+                ursaLabel: "Cyril Ursa's Bane Level (0-10) → +3,000 per level",
+                totalCapLabel: "Total Deployment Capacity (auto-calculated)",
+                infLabel: "Total Infantry you have",
+                lanLabel: "Total Lancers you have",
+                marLabel: "Total Marksmen you have",
+                joinersLabel: "Number of Joiner Marches",
+                mainTitle: "🚩 Main March Inputs",
+                openerLabel: "I am the Rally Opener",
+                mainPresetsLabel: "Suggested Ratios (Main)",
+                joinerTitle: "🔄 Joiner March Inputs",
+                mainInfLabel: "Infantry %",
+                mainLanLabel: "Lancers %",
+                mainMarLabel: "Marksmen %",
+                joinInfLabel: "Infantry %",
+                joinLanLabel: "Lancers %",
+                joinMarLabel: "Marksmen %",
+                joinPresetsLabel: "Suggested Ratios (Joiners – syncs with Main)",
+                autoBtn: "✨ Auto-Optimize Joiner Ratios<br><span style='font-size:13px; opacity:0.9;'>(≤15% Infantry • ≤20% Lancers • Max Marksmen)</span>",
+                calcBtn: "🔄 Calculate Distribution Now",
+                saveBtn: "💾 Save All Settings",
+                loadBtn: "📥 Load Saved Settings",
+                resetBtn: "🔄 Reset to Factory Defaults",
+                resultTitle: "Calculation Result:",
+                resultPlaceholder: "Change any value to update automatically",
+                totalUsedTitle: "Total Troops Used in All Marches:",
+                mainMarch: "Main March (Your March):",
+                eachJoiner: "Each Joiner March (out of {n} marches):",
+                totalJoinMar: "Total Marksmen used in all Joiners:",
+                remMar: "Remaining Marksmen after distribution:",
+                disabledMain: "Main March: Disabled – Not Rally Opener",
+                infantry: "Infantry",
+                lancers: "Lancers",
+                marksmen: "Marksmen",
+                alertSave: "✅ All settings saved successfully!",
+                alertLoad: "✅ Saved settings loaded!",
+                alertNoData: "No saved data found.",
+                alertReset: "Reset everything to factory defaults?",
+                alertNoRem: "No troops remaining after Main March!"
+            },
+            ar: {
+                title: "❄️ حاسبة مسيرات صيد الدب - Whiteout Survival",
+                subtitle: "حساب فوري • مهارة Snow Ape + Ursa's Bane • كل الميزات تعمل",
+                generalTitle: "📋 الإدخالات العامة",
+                baseLabel: "سعة الحشد الأساسية لكل مسيرة",
+                snowLabel: "مهارة Snow Ape – مفعلة",
+                snowLevelLabel: "مستوى Snow Ape (1-10) → +1500 لكل مستوى",
+                ursaLabel: "مستوى مهارة Cyril Ursa's Bane (0-10) → +3000 لكل مستوى",
+                totalCapLabel: "إجمالي سعة الحشد (يُحسب تلقائياً)",
+                infLabel: "إجمالي المشاة لديك",
+                lanLabel: "إجمالي الرماح لديك",
+                marLabel: "إجمالي الرماة لديك",
+                joinersLabel: "عدد مسيرات المنضمين",
+                mainTitle: "🚩 إدخالات المسيرة الرئيسية",
+                openerLabel: "أنا فاتح الـ Rally",
+                mainPresetsLabel: "النسب المقترحة (الرئيسية)",
+                joinerTitle: "🔄 إدخالات مسيرات المنضمين",
+                mainInfLabel: "نسبة المشاة %",
+                mainLanLabel: "نسبة الرماح %",
+                mainMarLabel: "نسبة الرماة %",
+                joinInfLabel: "نسبة المشاة %",
+                joinLanLabel: "نسبة الرماح %",
+                joinMarLabel: "نسبة الرماة %",
+                joinPresetsLabel: "النسب المقترحة (المنضمين – تتزامن مع الرئيسية)",
+                autoBtn: "✨ تحسين تلقائي لنسب المنضمين<br><span style='font-size:13px; opacity:0.9;'>(≤15% مشاة • ≤20% رماح • أقصى رماة)</span>",
+                calcBtn: "🔄 احسب التوزيع الآن",
+                saveBtn: "💾 حفظ كل الإعدادات",
+                loadBtn: "📥 تحميل الإعدادات المحفوظة",
+                resetBtn: "🔄 إعادة التعيين للإعدادات الافتراضية",
+                resultTitle: "نتيجة الحساب:",
+                resultPlaceholder: "غير أي قيمة للتحديث التلقائي",
+                totalUsedTitle: "إجمالي الجنود المستخدمة في كل المسيرات:",
+                mainMarch: "المسيرة الرئيسية (مسيرتك):",
+                eachJoiner: "كل مسيرة منضم (من {n} مسيرة):",
+                totalJoinMar: "إجمالي الرماة المستخدمين في كل المنضمين:",
+                remMar: "الرماة المتبقية بعد التوزيع:",
+                disabledMain: "المسيرة الرئيسية: معطلة – لست فاتح الـ Rally",
+                infantry: "المشاة",
+                lancers: "الرماح",
+                marksmen: "الرماة",
+                alertSave: "✅ تم حفظ كل الإعدادات بنجاح!",
+                alertLoad: "✅ تم تحميل الإعدادات المحفوظة!",
+                alertNoData: "لا توجد بيانات محفوظة.",
+                alertReset: "هل تريد إعادة تعيين كل شيء إلى الإعدادات الافتراضية؟",
+                alertNoRem: "لا توجد جنود متبقية بعد المسيرة الرئيسية!"
+            },
+            tr: {
+                title: "❄️ Whiteout Survival - Ayı Avı Yürüyüş Hesaplayıcı",
+                subtitle: "Gerçek zamanlı • Snow Ape + Ursa's Bane • Tüm özellikler çalışıyor",
+                generalTitle: "📋 Genel Girdiler",
+                baseLabel: "Temel Birlik Kapasitesi",
+                snowLabel: "Snow Ape (Tumbling Power) – Aktif",
+                snowLevelLabel: "Snow Ape Seviyesi (1-10) → seviye başına +1.500",
+                ursaLabel: "Cyril Ursa's Bane Seviyesi (0-10) → seviye başına +3.000",
+                totalCapLabel: "Toplam Birlik Kapasitesi (otomatik hesaplanır)",
+                infLabel: "Toplam Piyade",
+                lanLabel: "Toplam Mızraklı",
+                marLabel: "Toplam Okçu",
+                joinersLabel: "Katılımcı Yürüyüş Sayısı",
+                mainTitle: "🚩 Ana Yürüyüş Girdileri",
+                openerLabel: "Ben Rally Açanıyım",
+                mainPresetsLabel: "Önerilen Oranlar (Ana)",
+                joinerTitle: "🔄 Katılımcı Yürüyüş Girdileri",
+                mainInfLabel: "Piyade %",
+                mainLanLabel: "Mızraklı %",
+                mainMarLabel: "Okçu %",
+                joinInfLabel: "Piyade %",
+                joinLanLabel: "Mızraklı %",
+                joinMarLabel: "Okçu %",
+                joinPresetsLabel: "Önerilen Oranlar (Katılımcılar)",
+                autoBtn: "✨ Katılımcı Oranlarını Otomatik Optimize Et<br><span style='font-size:13px; opacity:0.9;'>(≤15% Piyade • ≤20% Mızraklı • Maks Okçu)</span>",
+                calcBtn: "🔄 Dağılımı Şimdi Hesapla",
+                saveBtn: "💾 Tüm Ayarları Kaydet",
+                loadBtn: "📥 Kayıtlı Ayarları Yükle",
+                resetBtn: "🔄 Fabrika Ayarlarına Sıfırla",
+                resultTitle: "Hesaplama Sonucu:",
+                resultPlaceholder: "Herhangi bir değeri değiştirerek otomatik güncelle",
+                totalUsedTitle: "Tüm Yürüyüşlerde Kullanılan Toplam Asker:",
+                mainMarch: "Ana Yürüyüş (Senin Yürüyüşün):",
+                eachJoiner: "{n} yürüyüşten her Katılımcı Yürüyüş:",
+                totalJoinMar: "Tüm katılımcılarda kullanılan toplam Okçu:",
+                remMar: "Dağıtımdan sonra kalan Okçu:",
+                disabledMain: "Ana Yürüyüş: Devre dışı – Rally açanı değilim",
+                infantry: "Piyade",
+                lancers: "Mızraklı",
+                marksmen: "Okçu",
+                alertSave: "✅ Tüm ayarlar başarıyla kaydedildi!",
+                alertLoad: "✅ Kayıtlı ayarlar yüklendi!",
+                alertNoData: "Kayıtlı veri bulunamadı.",
+                alertReset: "Her şeyi fabrika ayarlarına sıfırlamak istiyor musun?",
+                alertNoRem: "Ana yürüyüşten sonra kalan asker yok!"
+            },
+            es: {
+                title: "❄️ Whiteout Survival - Calculadora de Marchas para Caza de Osos",
+                subtitle: "Tiempo real • Snow Ape + Ursa's Bane • Todas las funciones activas",
+                generalTitle: "📋 Entradas Generales",
+                baseLabel: "Capacidad base de despliegue por marcha",
+                snowLabel: "Snow Ape (Tumbling Power) – Activo",
+                snowLevelLabel: "Nivel de Snow Ape (1-10) → +1.500 por nivel",
+                ursaLabel: "Nivel de Cyril Ursa's Bane (0-10) → +3.000 por nivel",
+                totalCapLabel: "Capacidad total de despliegue (calculada automáticamente)",
+                infLabel: "Total de Infantería que tienes",
+                lanLabel: "Total de Lanceros que tienes",
+                marLabel: "Total de Tiradores que tienes",
+                joinersLabel: "Número de Marchas de Unión",
+                mainTitle: "🚩 Entradas de Marcha Principal",
+                openerLabel: "Soy el que abre el Rally",
+                mainPresetsLabel: "Ratios Sugeridos (Principal)",
+                joinerTitle: "🔄 Entradas de Marchas de Unión",
+                mainInfLabel: "Infantería %",
+                mainLanLabel: "Lanceros %",
+                mainMarLabel: "Tiradores %",
+                joinInfLabel: "Infantería %",
+                joinLanLabel: "Lanceros %",
+                joinMarLabel: "Tiradores %",
+                joinPresetsLabel: "Ratios Sugeridos (Unión)",
+                autoBtn: "✨ Optimizar Automáticamente Ratios de Unión<br><span style='font-size:13px; opacity:0.9;'>(≤15% Infantería • ≤20% Lanceros • Máx Tiradores)</span>",
+                calcBtn: "🔄 Calcular Distribución Ahora",
+                saveBtn: "💾 Guardar Todas las Configuraciones",
+                loadBtn: "📥 Cargar Configuraciones Guardadas",
+                resetBtn: "🔄 Restablecer a Valores Predeterminados",
+                resultTitle: "Resultado del Cálculo:",
+                resultPlaceholder: "Cambia cualquier valor para actualizar automáticamente",
+                totalUsedTitle: "Total de Tropas Usadas en Todas las Marchas:",
+                mainMarch: "Marcha Principal (Tu Marcha):",
+                eachJoiner: "Cada Marcha de Unión (de {n} marchas):",
+                totalJoinMar: "Total de Tiradores usados en todas las uniones:",
+                remMar: "Tiradores restantes después de la distribución:",
+                disabledMain: "Marcha Principal: Desactivada – No soy el abridor del Rally",
+                infantry: "Infantería",
+                lancers: "Lanceros",
+                marksmen: "Tiradores",
+                alertSave: "✅ ¡Todas las configuraciones guardadas correctamente!",
+                alertLoad: "✅ ¡Configuraciones guardadas cargadas!",
+                alertNoData: "No se encontraron datos guardados.",
+                alertReset: "¿Resetear todo a valores de fábrica?",
+                alertNoRem: "¡No quedan tropas después de la Marcha Principal!"
+            },
+            ko: {
+                title: "❄️ Whiteout Survival - 베어 헌트 행군 계산기",
+                subtitle: "실시간 • Snow Ape + Ursa's Bane • 모든 기능 작동 중",
+                generalTitle: "📋 일반 입력",
+                baseLabel: "기본 행군 배치 용량",
+                snowLabel: "Snow Ape (Tumbling Power) – 활성화",
+                snowLevelLabel: "Snow Ape 레벨 (1-10) → 레벨당 +1,500",
+                ursaLabel: "Cyril Ursa's Bane 레벨 (0-10) → 레벨당 +3,000",
+                totalCapLabel: "총 배치 용량 (자동 계산)",
+                infLabel: "보유 보병 총계",
+                lanLabel: "보유 창병 총계",
+                marLabel: "보유 사수 총계",
+                joinersLabel: "참가 행군 수",
+                mainTitle: "🚩 메인 행군 입력",
+                openerLabel: "내가 랠리 개시자입니다",
+                mainPresetsLabel: "추천 비율 (메인)",
+                joinerTitle: "🔄 참가 행군 입력",
+                mainInfLabel: "보병 %",
+                mainLanLabel: "창병 %",
+                mainMarLabel: "사수 %",
+                joinInfLabel: "보병 %",
+                joinLanLabel: "창병 %",
+                joinMarLabel: "사수 %",
+                joinPresetsLabel: "추천 비율 (참가)",
+                autoBtn: "✨ 참가 비율 자동 최적화<br><span style='font-size:13px; opacity:0.9;'>(≤15% 보병 • ≤20% 창병 • 최대 사수)</span>",
+                calcBtn: "🔄 지금 배분 계산",
+                saveBtn: "💾 모든 설정 저장",
+                loadBtn: "📥 저장된 설정 불러오기",
+                resetBtn: "🔄 공장 초기값으로 재설정",
+                resultTitle: "계산 결과:",
+                resultPlaceholder: "값을 변경하면 자동으로 업데이트됩니다",
+                totalUsedTitle: "모든 행군에서 사용된 총 병력:",
+                mainMarch: "메인 행군 (당신의 행군):",
+                eachJoiner: "{n}개 행군 중 각 참가 행군:",
+                totalJoinMar: "모든 참가에서 사용된 총 사수:",
+                remMar: "배분 후 남은 사수:",
+                disabledMain: "메인 행군: 비활성화됨 – 랠리 개시자가 아님",
+                infantry: "보병",
+                lancers: "창병",
+                marksmen: "사수",
+                alertSave: "✅ 모든 설정이 성공적으로 저장되었습니다!",
+                alertLoad: "✅ 저장된 설정을 불러왔습니다!",
+                alertNoData: "저장된 데이터가 없습니다.",
+                alertReset: "모든 것을 초기값으로 재설정하시겠습니까?",
+                alertNoRem: "메인 행군 후 남은 병력이 없습니다!"
+            },
+            zh: {
+                title: "❄️ Whiteout Survival - 熊猎行军计算器",
+                subtitle: "实时计算 • Snow Ape + Ursa's Bane • 所有功能正常",
+                generalTitle: "📋 常规输入",
+                baseLabel: "每行军基础部署容量",
+                snowLabel: "Snow Ape – 已启用",
+                snowLevelLabel: "Snow Ape 等级 (1-10) → 每级 +1500",
+                ursaLabel: "Cyril Ursa's Bane 等级 (0-10) → 每级 +3000",
+                totalCapLabel: "总部署容量（自动计算）",
+                infLabel: "你拥有的总步兵",
+                lanLabel: "你拥有的总枪兵",
+                marLabel: "你拥有的总射手",
+                joinersLabel: "加入行军数量",
+                mainTitle: "🚩 主行军输入",
+                openerLabel: "我是集结发起者",
+                mainPresetsLabel: "推荐比例（主行军）",
+                joinerTitle: "🔄 加入行军输入",
+                mainInfLabel: "步兵 %",
+                mainLanLabel: "枪兵 %",
+                mainMarLabel: "射手 %",
+                joinInfLabel: "步兵 %",
+                joinLanLabel: "枪兵 %",
+                joinMarLabel: "射手 %",
+                joinPresetsLabel: "推荐比例（加入行军）",
+                autoBtn: "✨ 自动优化加入行军比例<br><span style='font-size:13px; opacity:0.9;'>(≤15% 步兵 • ≤20% 枪兵 • 最大射手)</span>",
+                calcBtn: "🔄 立即计算分配",
+                saveBtn: "💾 保存所有设置",
+                loadBtn: "📥 加载已保存设置",
+                resetBtn: "🔄 重置为默认设置",
+                resultTitle: "计算结果：",
+                resultPlaceholder: "更改任意数值即可自动更新",
+                totalUsedTitle: "所有行军使用的总兵力：",
+                mainMarch: "主行军（你的行军）：",
+                eachJoiner: "每个加入行军（共 {n} 个）：",
+                totalJoinMar: "所有加入行军使用的总射手：",
+                remMar: "分配后剩余射手：",
+                disabledMain: "主行军：已禁用 – 不是集结发起者",
+                infantry: "步兵",
+                lancers: "枪兵",
+                marksmen: "射手",
+                alertSave: "✅ 所有设置已成功保存！",
+                alertLoad: "✅ 已加载保存的设置！",
+                alertNoData: "未找到保存的数据。",
+                alertReset: "是否将所有内容重置为出厂默认值？",
+                alertNoRem: "主行军后没有剩余部队！"
+            }
+        };
+
+        let currentLang = 'en';
+
+        function changeLanguage() {
+            currentLang = document.getElementById('language-select').value;
+            const t = translations[currentLang];
+
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('general-title').textContent = t.generalTitle;
+            document.getElementById('base-label').textContent = t.baseLabel;
+            document.getElementById('snow-label').textContent = t.snowLabel;
+            document.getElementById('snow-level-label').textContent = t.snowLevelLabel;
+            document.getElementById('ursa-label').textContent = t.ursaLabel;
+            document.getElementById('total-cap-label').textContent = t.totalCapLabel;
+            document.getElementById('inf-label').textContent = t.infLabel;
+            document.getElementById('lan-label').textContent = t.lanLabel;
+            document.getElementById('mar-label').textContent = t.marLabel;
+            document.getElementById('joiners-label').textContent = t.joinersLabel;
+
+            document.getElementById('main-title').textContent = t.mainTitle;
+            document.getElementById('opener-label').textContent = t.openerLabel;
+            document.getElementById('main-presets-label').textContent = t.mainPresetsLabel;
+
+            document.getElementById('joiner-title').textContent = t.joinerTitle;
+            document.getElementById('main-inf-label').textContent = t.mainInfLabel;
+            document.getElementById('main-lan-label').textContent = t.mainLanLabel;
+            document.getElementById('main-mar-label').textContent = t.mainMarLabel;
+            document.getElementById('join-inf-label').textContent = t.joinInfLabel;
+            document.getElementById('join-lan-label').textContent = t.joinLanLabel;
+            document.getElementById('join-mar-label').textContent = t.joinMarLabel;
+            document.getElementById('join-presets-label').textContent = t.joinPresetsLabel;
+
+            document.getElementById('auto-btn').innerHTML = t.autoBtn;
+            document.getElementById('calc-btn').textContent = t.calcBtn;
+            document.getElementById('save-btn').textContent = t.saveBtn;
+            document.getElementById('load-btn').textContent = t.loadBtn;
+            document.getElementById('reset-btn').textContent = t.resetBtn;
+
+            calculate(); // Refresh results in new language
+        }
+
+        // === All previous functionality preserved ===
+        const PRESETS = [
+            { inf: 5, lan: 5, mar: 90, label: "5-5-90" },
+            { inf: 10, lan: 10, mar: 80, label: "10-10-80" },
+            { inf: 10, lan: 20, mar: 70, label: "10-20-70" },
+            { inf: 15, lan: 10, mar: 75, label: "15-10-75" },
+            { inf: 15, lan: 25, mar: 60, label: "15-25-60" },
+            { inf: 0, lan: 20, mar: 80, label: "0-20-80" },
+            { inf: 0, lan: 30, mar: 70, label: "0-30-70" }
+        ];
+
+        let mainPresetButtons = [];
+        let joinerPresetButtons = [];
+
+        function generatePresetButtons() {
+            const mainContainer = document.getElementById('main-presets');
+            const joinerContainer = document.getElementById('joiner-presets');
+            mainContainer.innerHTML = ''; joinerContainer.innerHTML = '';
+            mainPresetButtons = []; joinerPresetButtons = [];
+
+            PRESETS.forEach(preset => {
+                const mainBtn = document.createElement('button');
+                mainBtn.className = 'preset-btn';
+                mainBtn.textContent = preset.label;
+                mainBtn.dataset.inf = preset.inf; mainBtn.dataset.lan = preset.lan; mainBtn.dataset.mar = preset.mar;
+                mainBtn.addEventListener('click', () => {
+                    if (!mainBtn.disabled) {
+                        document.getElementById('main-inf-pct').value = preset.inf;
+                        document.getElementById('main-lan-pct').value = preset.lan;
+                        document.getElementById('main-mar-pct').value = preset.mar;
+                        calculate();
+                    }
+                });
+                mainContainer.appendChild(mainBtn);
+                mainPresetButtons.push(mainBtn);
+
+                const joinerBtn = document.createElement('button');
+                joinerBtn.className = 'preset-btn';
+                joinerBtn.textContent = preset.label;
+                joinerBtn.dataset.inf = preset.inf; joinerBtn.dataset.lan = preset.lan; joinerBtn.dataset.mar = preset.mar;
+                joinerBtn.addEventListener('click', () => {
+                    if (!joinerBtn.disabled) {
+                        document.getElementById('join-inf-pct').value = preset.inf;
+                        document.getElementById('join-lan-pct').value = preset.lan;
+                        document.getElementById('join-mar-pct').value = preset.mar;
+                        calculate();
+                    }
+                });
+                joinerContainer.appendChild(joinerBtn);
+                joinerPresetButtons.push(joinerBtn);
+            });
+        }
+
+        function getTotalCapacity() {
+            const base = parseFloat(document.getElementById('base-capacity').value) || 178710;
+            const snowActive = document.getElementById('snow-ape-active').checked;
+            const snowLevel = parseInt(document.getElementById('snow-ape-level').value) || 0;
+            const ursaLevel = parseInt(document.getElementById('ursa-level').value) || 0;
+
+            const snowBonus = snowActive ? 1500 * snowLevel : 0;
+            const ursaBonus = 3000 * ursaLevel;
+
+            const total = Math.floor(base + snowBonus + ursaBonus);
+            document.getElementById('total-capacity-display').textContent = total.toLocaleString();
+            return total;
+        }
+
+        function updatePresetButtons() {
+            const capacity = getTotalCapacity();
+            const totalInf = parseInt(document.getElementById('total-inf').value) || 0;
+            const totalLan = parseInt(document.getElementById('total-lan').value) || 0;
+            const totalMar = parseInt(document.getElementById('total-mar').value) || 0;
+            const numJoiners = parseInt(document.getElementById('num-joiners').value) || 0;
+            const isOpener = document.getElementById('rally-opener').checked;
+            const mainInfPct = parseFloat(document.getElementById('main-inf-pct').value) || 0;
+            const mainLanPct = parseFloat(document.getElementById('main-lan-pct').value) || 0;
+            const mainMarPct = parseFloat(document.getElementById('main-mar-pct').value) || 0;
+
+            mainPresetButtons.forEach(btn => {
+                const inf = parseFloat(btn.dataset.inf);
+                const lan = parseFloat(btn.dataset.lan);
+                const mar = parseFloat(btn.dataset.mar);
+                const desInf = Math.round(capacity * inf / 100);
+                const desLan = Math.round(capacity * lan / 100);
+                const desMar = Math.round(capacity * mar / 100);
+                const enough = desInf <= totalInf && desLan <= totalLan && desMar <= totalMar;
+                btn.classList.toggle('insufficient', !enough);
+                btn.disabled = !enough;
+            });
+
+            joinerPresetButtons.forEach(btn => {
+                const inf = parseFloat(btn.dataset.inf);
+                const lan = parseFloat(btn.dataset.lan);
+                const mar = parseFloat(btn.dataset.mar);
+                const desInf = Math.round(capacity * inf / 100);
+                const desLan = Math.round(capacity * lan / 100);
+                const desMar = Math.round(capacity * mar / 100);
+
+                let actualMainInf = 0, actualMainLan = 0, actualMainMar = 0;
+                if (isOpener) {
+                    actualMainInf = Math.min(Math.round(capacity * mainInfPct / 100), totalInf);
+                    actualMainLan = Math.min(Math.round(capacity * mainLanPct / 100), totalLan);
+                    actualMainMar = Math.min(Math.round(capacity * mainMarPct / 100), totalMar);
+                }
+                
+                const remInf = totalInf - actualMainInf;
+                const remLan = totalLan - actualMainLan;
+                const remMar = totalMar - actualMainMar;
+                
+                const maxPerInf = numJoiners > 0 ? Math.round(remInf / numJoiners) : 0;
+                const maxPerLan = numJoiners > 0 ? Math.round(remLan / numJoiners) : 0;
+                const maxPerMar = numJoiners > 0 ? Math.round(remMar / numJoiners) : 0;
+                
+                const enough = desInf <= maxPerInf && desLan <= maxPerLan && desMar <= maxPerMar;
+                btn.classList.toggle('insufficient', !enough);
+                btn.disabled = !enough;
+            });
+        }
+
+        function autoOptimizeJoiners() {
+            const capacity = getTotalCapacity();
+            const totalInf = parseInt(document.getElementById('total-inf').value) || 0;
+            const totalLan = parseInt(document.getElementById('total-lan').value) || 0;
+            const totalMar = parseInt(document.getElementById('total-mar').value) || 0;
+            const numJoiners = parseInt(document.getElementById('num-joiners').value) || 6;
+            const isOpener = document.getElementById('rally-opener').checked;
+
+            const mInfPct = parseFloat(document.getElementById('main-inf-pct').value) || 0;
+            const mLanPct = parseFloat(document.getElementById('main-lan-pct').value) || 0;
+            const mMarPct = parseFloat(document.getElementById('main-mar-pct').value) || 0;
+
+            let mainInf = 0, mainLan = 0, mainMar = 0;
+            if (isOpener) {
+                mainInf = Math.min(Math.round(capacity * mInfPct / 100), totalInf);
+                mainLan = Math.min(Math.round(capacity * mLanPct / 100), totalLan);
+                mainMar = Math.min(Math.round(capacity * mMarPct / 100), totalMar);
+            }
+
+            const remInf = totalInf - mainInf;
+            const remLan = totalLan - mainLan;
+            const remMar = totalMar - mainMar;
+
+            if (remInf + remLan + remMar === 0) {
+                alert(translations[currentLang].alertNoRem);
+                return;
+            }
+
+            const maxPerInf = Math.round(remInf / numJoiners);
+            const maxPerLan = Math.round(remLan / numJoiners);
+
+            let infPct = Math.min(15, Math.round((maxPerInf / capacity) * 100));
+            let lanPct = Math.min(20, Math.round((maxPerLan / capacity) * 100));
+            let marPct = 100 - infPct - lanPct;
+            if (marPct < 0) marPct = 100;
+
+            document.getElementById('join-inf-pct').value = infPct;
+            document.getElementById('join-lan-pct').value = lanPct;
+            document.getElementById('join-mar-pct').value = marPct;
+
+            calculate();
+        }
+
+        function calculate() {
+            const t = translations[currentLang];
+            const capacity = getTotalCapacity();
+            const totalInf = parseInt(document.getElementById('total-inf').value) || 0;
+            const totalLan = parseInt(document.getElementById('total-lan').value) || 0;
+            const totalMar = parseInt(document.getElementById('total-mar').value) || 0;
+            const numJoiners = parseInt(document.getElementById('num-joiners').value) || 0;
+            const isOpener = document.getElementById('rally-opener').checked;
+            
+            const mainInfPct = parseFloat(document.getElementById('main-inf-pct').value) || 0;
+            const mainLanPct = parseFloat(document.getElementById('main-lan-pct').value) || 0;
+            const mainMarPct = parseFloat(document.getElementById('main-mar-pct').value) || 0;
+            
+            const joinInfPct = parseFloat(document.getElementById('join-inf-pct').value) || 0;
+            const joinLanPct = parseFloat(document.getElementById('join-lan-pct').value) || 0;
+            const joinMarPct = parseFloat(document.getElementById('join-mar-pct').value) || 0;
+            
+            const warnings = [];
+            
+            const mainSum = mainInfPct + mainLanPct + mainMarPct;
+            const joinSum = joinInfPct + joinLanPct + joinMarPct;
+            
+            if (mainSum > 100) warnings.push("Main March percentages exceed 100%");
+            if (joinSum > 100) warnings.push("Joiner March percentages exceed 100%");
+            if (mainSum < 100 && isOpener) warnings.push("Main March percentages do not total 100%");
+            if (joinSum < 100) warnings.push("Joiner March percentages do not total 100%");
+            if (numJoiners < 1) warnings.push("Number of Joiner Marches must be at least 1");
+            
+            let actualMainInf = 0, actualMainLan = 0, actualMainMar = 0;
+            if (isOpener) {
+                actualMainInf = Math.min(Math.round(capacity * mainInfPct / 100), totalInf);
+                actualMainLan = Math.min(Math.round(capacity * mainLanPct / 100), totalLan);
+                actualMainMar = Math.min(Math.round(capacity * mainMarPct / 100), totalMar);
+            }
+            
+            const remInf = totalInf - actualMainInf;
+            const remLan = totalLan - actualMainLan;
+            const remMar = totalMar - actualMainMar;
+            
+            const maxPerInf = numJoiners > 0 ? Math.round(remInf / numJoiners) : 0;
+            const maxPerLan = numJoiners > 0 ? Math.round(remLan / numJoiners) : 0;
+            const maxPerMar = numJoiners > 0 ? Math.round(remMar / numJoiners) : 0;
+            
+            let actualJoinerInf = Math.min(Math.round(capacity * joinInfPct / 100), maxPerInf);
+            let actualJoinerLan = Math.min(Math.round(capacity * joinLanPct / 100), maxPerLan);
+            let actualJoinerMar = Math.min(Math.round(capacity * joinMarPct / 100), maxPerMar);
+            
+            const totalUsedInf = actualMainInf + (actualJoinerInf * numJoiners);
+            const totalUsedLan = actualMainLan + (actualJoinerLan * numJoiners);
+            const totalUsedMar = actualMainMar + (actualJoinerMar * numJoiners);
+            
+            const totalJoinerMarUsed = numJoiners * actualJoinerMar;
+            const remainingMarAfter = remMar - totalJoinerMarUsed;
+            
+            let html = `<h3>${t.resultTitle}</h3>`;
+            
+            if (isOpener) {
+                html += `
+                <p><strong>${t.mainMarch}</strong></p>
+                <p>${t.infantry}: ${actualMainInf.toLocaleString()} (${mainInfPct}%)</p>
+                <p>${t.lancers}: ${actualMainLan.toLocaleString()} (${mainLanPct}%)</p>
+                <p>${t.marksmen}: ${actualMainMar.toLocaleString()} (${mainMarPct}%)</p><br>`;
+            } else {
+                html += `<p><strong>${t.disabledMain}</strong></p><br>`;
+            }
+            
+            html += `
+            <p><strong>${t.eachJoiner.replace('{n}', numJoiners)}</strong></p>
+            <p>${t.infantry}: ${actualJoinerInf.toLocaleString()} (${joinInfPct}%)</p>
+            <p>${t.lancers}: ${actualJoinerLan.toLocaleString()} (${joinLanPct}%)</p>
+            <p>${t.marksmen}: ${actualJoinerMar.toLocaleString()} (${joinMarPct}%)</p>
+            
+            <p><strong>${t.totalJoinMar}</strong> ${totalJoinerMarUsed.toLocaleString()}</p>
+            <p><strong>${t.remMar}</strong> ${remainingMarAfter.toLocaleString()}</p>`;
+            
+            html += `
+            <div class="total-used">
+                <strong>${t.totalUsedTitle}</strong><br><br>
+                ${t.infantry}: ${totalUsedInf.toLocaleString()}<br>
+                ${t.lancers}: ${totalUsedLan.toLocaleString()}<br>
+                ${t.marksmen}: ${totalUsedMar.toLocaleString()}
+            </div>`;
+            
+            document.getElementById('output').innerHTML = html;
+            
+            const warningEl = document.getElementById('warnings');
+            warningEl.innerHTML = warnings.map(w => `<p>⚠ ${w}</p>`).join('');
+            warningEl.style.display = warnings.length ? 'block' : 'none';
+            
+            updatePresetButtons();
+        }
+
+        function saveDefaults() {
+            const data = {
+                baseCapacity: document.getElementById('base-capacity').value,
+                snowApeActive: document.getElementById('snow-ape-active').checked,
+                snowApeLevel: document.getElementById('snow-ape-level').value,
+                ursaLevel: document.getElementById('ursa-level').value,
+                totalInf: document.getElementById('total-inf').value,
+                totalLan: document.getElementById('total-lan').value,
+                totalMar: document.getElementById('total-mar').value,
+                numJoiners: document.getElementById('num-joiners').value,
+                mainInfPct: document.getElementById('main-inf-pct').value,
+                mainLanPct: document.getElementById('main-lan-pct').value,
+                mainMarPct: document.getElementById('main-mar-pct').value,
+                joinInfPct: document.getElementById('join-inf-pct').value,
+                joinLanPct: document.getElementById('join-lan-pct').value,
+                joinMarPct: document.getElementById('join-mar-pct').value,
+                isOpener: document.getElementById('rally-opener').checked,
+                language: currentLang
+            };
+            localStorage.setItem('bearHuntCalculatorDefaults', JSON.stringify(data));
+            alert(translations[currentLang].alertSave);
+        }
+
+        function loadDefaults() {
+            const saved = localStorage.getItem('bearHuntCalculatorDefaults');
+            if (!saved) {
+                alert(translations[currentLang].alertNoData);
+                return;
+            }
+            const data = JSON.parse(saved);
+            
+            document.getElementById('base-capacity').value = data.baseCapacity || 178710;
+            document.getElementById('snow-ape-active').checked = data.snowApeActive !== undefined ? data.snowApeActive : true;
+            document.getElementById('snow-ape-level').value = data.snowApeLevel || 10;
+            document.getElementById('ursa-level').value = data.ursaLevel || 10;
+            document.getElementById('total-inf').value = data.totalInf || 400000;
+            document.getElementById('total-lan').value = data.totalLan || 300000;
+            document.getElementById('total-mar').value = data.totalMar || 648417;
+            document.getElementById('num-joiners').value = data.numJoiners || 6;
+            document.getElementById('main-inf-pct').value = data.mainInfPct || 10;
+            document.getElementById('main-lan-pct').value = data.mainLanPct || 15;
+            document.getElementById('main-mar-pct').value = data.mainMarPct || 75;
+            document.getElementById('join-inf-pct').value = data.joinInfPct || 10;
+            document.getElementById('join-lan-pct').value = data.joinLanPct || 15;
+            document.getElementById('join-mar-pct').value = data.joinMarPct || 75;
+            document.getElementById('rally-opener').checked = data.isOpener !== undefined ? data.isOpener : true;
+
+            if (data.language) {
+                currentLang = data.language;
+                document.getElementById('language-select').value = currentLang;
+            }
+            
+            changeLanguage();
+            alert(translations[currentLang].alertLoad);
+        }
+
+        function resetToFactoryDefaults() {
+            if (confirm(translations[currentLang].alertReset)) {
+                document.getElementById('base-capacity').value = 178710;
+                document.getElementById('snow-ape-active').checked = true;
+                document.getElementById('snow-ape-level').value = 10;
+                document.getElementById('ursa-level').value = 10;
+                document.getElementById('total-inf').value = 400000;
+                document.getElementById('total-lan').value = 300000;
+                document.getElementById('total-mar').value = 648417;
+                document.getElementById('num-joiners').value = 6;
+                document.getElementById('main-inf-pct').value = 10;
+                document.getElementById('main-lan-pct').value = 15;
+                document.getElementById('main-mar-pct').value = 75;
+                document.getElementById('join-inf-pct').value = 10;
+                document.getElementById('join-lan-pct').value = 15;
+                document.getElementById('join-mar-pct').value = 75;
+                document.getElementById('rally-opener').checked = true;
+                calculate();
+            }
+        }
+
+        window.onload = function() {
+            generatePresetButtons();
+            
+            const allInputs = document.querySelectorAll('input');
+            allInputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    if (['base-capacity', 'snow-ape-level', 'ursa-level'].includes(input.id)) getTotalCapacity();
+                    calculate();
+                });
+            });
+            
+            document.getElementById('snow-ape-active').addEventListener('change', () => {
+                getTotalCapacity();
+                calculate();
+            });
+            
+            document.getElementById('rally-opener').addEventListener('change', calculate);
+            
+            // Load saved language
+            const saved = localStorage.getItem('bearHuntCalculatorDefaults');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.language) {
+                    currentLang = data.language;
+                    document.getElementById('language-select').value = currentLang;
+                }
+            }
+            
+            changeLanguage();
+            getTotalCapacity();
+            calculate();
+        };
+    </script>
+</body>
+</html>
